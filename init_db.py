@@ -1,6 +1,7 @@
 # Script to initialize the database with a sample string
 
-from database import SessionLocal, Base, engine, StringItem
+from database import Base, SessionLocal, StringItem, engine
+
 
 def init():
     Base.metadata.create_all(bind=engine)
@@ -10,5 +11,7 @@ def init():
         db.commit()
     db.close()
 
+
 if __name__ == "__main__":
+    init()
     init()

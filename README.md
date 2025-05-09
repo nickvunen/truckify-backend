@@ -20,12 +20,17 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-2. Initialize the database
+2. Install dependencies
+```
+pip install
+```
+
+3. Initialize the database
 ```
 python3 init_db.py
 ```
 
-3. Start the FastAPI application
+4. Start the FastAPI application
 ```
 uvicorn main:app --reload
 ```

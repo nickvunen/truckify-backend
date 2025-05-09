@@ -78,6 +78,16 @@ def create_truck(truck: TruckResponse, db: Session = Depends(get_db)):
     return new_truck
 
 
+@app.delete("/trucks/{truck_id}")
+def delete_truck(truck_id: int, db: Session = Depends(get_db)):
+    truck = db.query(Truck).filter(Truck.id == truck_id).first()
+    if truck:
+        db.delete(truck)
+        db.commit()
+        return {"message": "Truck deleted"}
+    return {"error": "Truck not found"}
+
+
 # ##### BOOKING ENDPOINTS #####
 
 
@@ -112,3 +122,39 @@ def create_booking(booking: BookingResponse, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_booking)
     return {"booking": new_booking}
+
+
+@app.delete("/bookings/{booking_id}")
+def delete_booking(booking_id: int, db: Session = Depends(get_db)):
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if booking:
+        db.delete(booking)
+        db.commit()
+        return {"message": "Booking deleted"}
+    return {"error": "Booking not found"}
+
+
+##### TRUCK AVAILABILITY ENDPOINTS #####
+
+
+class TruckAvailabilityResponse(BaseModel):
+    start: datetime
+    end: datetime
+
+
+@app.post("/trucks_available")
+def post_available_trucks(
+    truck_availability: TruckAvailabilityResponse, db: Session = Depends(get_db)
+):
+    start_date = truck_availability.start
+    end_date = truck_availability.end
+
+    # Query to find all trucks that are not booked during the specified period
+    available_trucks = (
+        db.query(Truck)
+        .outerjoin(Booking)
+        .filter((Booking.start_date > end_date) | (Booking.end_date < start_date))
+        .all()
+    )
+
+    return {"available_trucks": available_trucks}

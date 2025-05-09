@@ -222,21 +222,21 @@ def post_available_trucks(
     available_trucks = (
         db.query(Truck)
         .outerjoin(Booking)
-        .filter((Booking.start_date > end_date) | (Booking.end_date < start_date))
+        .filter(and_(Booking.start_date > end_date, Booking.end_date < start_date))
         .all()
     )
 
     # Query to find all trucks that are booked but are near the end of their booking period
-    buffer_period = func.interval("3 day")
+    buffer_period = timedelta(days=3)
     proposed_trucks = (
         db.query(Truck)
         .outerjoin(Booking)
         .filter(
             and_(
-                (Booking.start_date >= start_date - buffer_period)
-                & (Booking.start_date < end_date),
-                (Booking.end_date <= end_date + buffer_period)
-                & (Booking.end_date > start_date),
+                Booking.start_date >= start_date - buffer_period,
+                Booking.start_date < end_date,
+                Booking.end_date <= end_date + buffer_period,
+                Booking.end_date > start_date,
             )
         )
         .all()

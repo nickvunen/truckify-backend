@@ -8,3 +8,4 @@ __pycache__/
 
 # Mac and system files
 .DS_Store
+uploads/

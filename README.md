@@ -14,7 +14,8 @@ docker run -p 8000:8000 fastapi-string-api
 ## Using the terminal
 
 1. Create and get in to a virtual environment:
-```
+``
+`
 python3 -m venv venv
 
 source venv/bin/activate
